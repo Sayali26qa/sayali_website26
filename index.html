@@ -1,170 +1,56 @@
+
 <!DOCTYPE html>
-<html lang="english">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Consent Widget</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="widget-container">
-   	<div class="header-language-wrapper-container ">
-		<div id="language-wrapper" style="display: none;">
-		    <div class="dropdown">
-			<label for="langSelect">Language Preference <br></label>
-			<select id="langSelect"></select>
-			</div>
-		</div>  
-	</div>
-    <div class="header-container">
-      <div class="logo-area" id="logo-area"></div>
-    </div>
-    	<div class ="preview-statements">
-        <div id="consent-root">Loading consent form...</div>
-        <div id="error-message" class="error-message"></div>
-        <div id="toast"></div>
-      </div> 
-      <div class="full-width-footer-border"></div>
-      <div class="button-group" id="button-group">
-          <button class="cancel" id="cancelBtn" style="display: none;">Cancel</button>
-          <button class="submit" id="submitBtn" style="display: none;">Submit</button>
-      </div>
-    
-  </div>
-  <script>
-    // Configuration options for the consent widget
-    window.consentWidgetConfig = {
-      consentFormId: "b703fe89-fb8a-47db-9f7c-43f666c9c069",
-      apiDomain: "https://perf.pre-dataprivacy.com",
-      apiUrl: "https://perf.pre-dataprivacy.com/cpm-api/open-api/v1/consent/v1/getConsentFormById",
-      submitApiUrl: "https://perf.pre-dataprivacy.com/cpm-api/open-api/v1/consent/v1/createOrUpdateConsent",
-      tenantToken: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2NmMwZDU3Mi0yYWU1LTRjYzYtODEwOS1lNTIyYzQwNzA5N2UiLCJwcm9kdWN0IjoiQ29uc2VudCBNYW5hZ21lbnQiLCJzY29wZSI6ImFjY2VzcyIsImlhdCI6MTc5NDk5NTE1OSwiZXhwIjoxNzk1MDgxNTU5fQ.9GXwW4wplojV5Kb0xkJGstApNBR_Js53W7siPDBezyI",
-      signatureServiceUrl: "https://perf.pre-dataprivacy.com/cpm-sign",
-      dataPrincipalId: [
-        {
-          key: "email",
-          value: "email"
+    <title>My First Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            text-align: center;
+            margin: 0;
+            padding: 50px;
         }
-      ],
-      customAttributes: {
-        "Test": "",
-        "vapt": ""
-      },
-      showButtons: true,
-      showLanguageDropdown: true,
-      enableCheckboxes: true,
-      enableRadioButtons: true,
-      enableDropdowns: true,
-      receivedType:"WEB",
-      customHeaders: {
-        "test-header-1": "test-1",
-        "test-header-2": "test-2"
-      },
-      // OTP verification, used when the consent form has OTP enabled.
-      // Set the end user's mobile (required, 10 digits) and email (optional) before the user taps Generate OTP.
-      // Do not pass them in the page URL.
-      // The user taps Generate OTP, enters the OTP and taps Verify and Submit: one tap verifies the OTP and saves
-      // the consent. An OTP form has no separate Submit / Cancel button.
-      mobile: "",
-      email: "",
-      sendOtpApiUrl: "https://perf.pre-dataprivacy.com/cpm-api/open-api/v1/consent/v1/sendOtp",
-      verifyOtpApiUrl: "https://perf.pre-dataprivacy.com/cpm-api/open-api/v1/consent/v1/verifyOtp",
-      // Called once after the consent is saved; response.consentCapturedAt has the consent date and timestamp.
-      onConsentSubmitted: function (response) {
-        // e.g. store response.consentCapturedAt or enable a button on this page
-      },
-      // With showButtons: false, called when the form can (true) or cannot (false) be submitted:
-      // set the disabled state of this page's Submit button to !isReady.
-      // For an OTP form it is ready once the OTP is entered; consentWidget.submit() then verifies it and saves.
-      onSubmitReady: function (isReady) {
-        // e.g. document.getElementById("parentSubmitBtn").disabled = !isReady;
-      }
-    };
 
-  // Function for Android WebView integration to dynamically set tenant token, data principal ID,
-  // and the end user's mobile and email for OTP verification.
-  // Called from Android native code before loading the consent widget
-  window.updateConsentConfig = function(token, dataPrincipalId, mobile, email) {
-      if (token) {
-        window.consentWidgetConfig.tenantToken = token;
-      }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 450px;
+            margin: auto;
+            box-shadow: 0 2px 10px #ccc;
+        }
 
-      if (dataPrincipalId) {
-        window.consentWidgetConfig.dataPrincipalId = dataPrincipalId;
-      }
+        h1 {
+            color: #3448a5;
+        }
 
-      if (mobile !== undefined) {
-        window.consentWidgetConfig.mobile = mobile;
-      }
+        p {
+            color: #555;
+        }
 
-      if (email !== undefined) {
-        window.consentWidgetConfig.email = email;
-      }
+        button {
+            background: #3448a5;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-      // Dynamically load script.js only once to prevent multiple script injections
-      if (!window.scriptLoaded) {
-        const script = document.createElement('script');
-        script.src = 'script.js';
-        // SRI (Subresource Integrity) ensures script hasn't been tampered with
-        // crossOrigin required for SRI validation
-        script.crossOrigin = 'anonymous';
-        script.integrity = "sha384-8H/QPhDYt3qE60h+Njcm8rNg0opcj5O5tgifvL0Y1QYCpA1s+jmnfw53tMOAUvbp";
-        script.onload = function() {
-          window.scriptLoaded = true;
-        };
-        document.body.appendChild(script);
-      }
+        button:hover {
+            background: #202f75;
+        }
+    </style>
+</head>
 
-      return "Config updated successfully";
-    };
-  </script>
-  
+<body>
 
-<!--
-  Optional: Use custom buttons if the parent application
-  wants to control Consent Form submission and reset actions.
+    <div class="container">
+        <h1>Welcome to QH!</h1>
+        <p> We are testing cookie.</p>
+        <button>Get Started</button>
+    </div>
 
-  Note:
-  - Set `showButtons: false` in the widget configuration.
-  - Submit button calls `consentWidget.submit()`.
-  - Clear button calls `consentWidget.reset()`.
-  - Keep the parent Submit button disabled on load and enable it from `onSubmitReady`.
-  - For a form with OTP enabled, the user generates and enters the OTP in the widget; the form becomes ready
-    once the OTP is entered, and `consentWidget.submit()` verifies the OTP and saves the consent in one step.
-    If the OTP was verified but the save failed, calling `consentWidget.submit()` again retries only the save.
-  - `consentWidget.submit()` always resolves to an object; check `result.success`.
--->
-
-<!--Example-->
-
-<!--
-<button id="parentClearBtn" style="padding:10px 16px; background:#dc2626; color:white; border:none; border-radius:6px;">
-  Clear Consent
-</button>
-<button id="parentSubmitBtn" style="padding:10px 16px; background:#16a34a; color:white; border:none; border-radius:6px;">
-  Submit Consent
-</button>
-
-<script>
-  document.getElementById("parentSubmitBtn").addEventListener("click", async () => {
-    if (!window.consentWidget) return;
-
-    const result = await window.consentWidget.submit();
-
-    if (result.success) {
-      // navigate next page here
-      // window.location.href = "/next-page";
-    }
-  });
-
-  document.getElementById("parentClearBtn").addEventListener("click", () => {
-    if (!window.consentWidget) return;
-
-    window.consentWidget.reset();
-  });
-</script>
--->
-<!--comment below line in case of Android integration -->
-<script src="script.js" integrity="sha384-8H/QPhDYt3qE60h+Njcm8rNg0opcj5O5tgifvL0Y1QYCpA1s+jmnfw53tMOAUvbp" crossorigin="anonymous"></script>
 </body>
 </html>
